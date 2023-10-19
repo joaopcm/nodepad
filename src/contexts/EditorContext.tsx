@@ -6,7 +6,6 @@ import Placeholder from '@tiptap/extension-placeholder'
 import Link from '@tiptap/extension-link'
 
 import { EditorBlock } from '@/components/EditorBlock'
-import { TrailingNode } from '@/components/TrailingNode'
 
 interface EditorContextValue {
   editor: Editor | null
@@ -36,17 +35,9 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
       },
     },
     extensions: [
-      Document.extend({
-        content: 'heading block*',
-      }),
       StarterKit.configure({
         codeBlock: false,
         document: false,
-      }),
-      Link.configure({
-        HTMLAttributes: {
-          class: 'text-emerald-500 hover:text-emerald-600 hover:cursor-pointer',
-        },
       }),
       Placeholder.configure({
         placeholder: ({ node }) => {
@@ -61,10 +52,17 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
           return 'Start typing or press ⌘ + K to open the command palette...'
         },
       }),
+      Document.extend({
+        content: 'heading block*',
+      }),
+      Link.configure({
+        HTMLAttributes: {
+          class: 'text-emerald-500 hover:text-emerald-600 hover:cursor-pointer',
+        },
+      }),
       EditorBlock,
-      TrailingNode,
     ],
-    content: ``,
+    content: '',
   })
 
   return (
