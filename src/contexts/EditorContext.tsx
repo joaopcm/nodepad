@@ -19,8 +19,6 @@ const EditorContext = createContext<EditorContextValue>(
 )
 
 export const initialCode = [
-  `import 'isomorphic-fetch';`,
-  ``,
   `fetch("https://api.github.com/users/joaopcm")`,
   `  .then((response) => response.json())`,
   `  .then((data) => {`,
