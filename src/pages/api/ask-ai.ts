@@ -42,7 +42,7 @@ export default async function handler(
       }
     }
 
-    const cachedAnswer = await cache.get(`ai-explanation-${req.body.id}`)
+    const cachedAnswer = await cache.get(`ai-explanation:${req.body.id}`)
 
     if (cachedAnswer) {
       return res.status(200).json({
@@ -53,7 +53,7 @@ export default async function handler(
     const aiExplanation = await askAI(req.body.codeSnippet)
 
     await cache.set(
-      `ai-explanation-${req.body.id}`,
+      `ai-explanation:${req.body.id}`,
       aiExplanation.data.choices[0].text,
       {
         ex: CACHE_DURATION,
