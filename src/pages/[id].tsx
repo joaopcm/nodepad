@@ -5,7 +5,7 @@ import { GetServerSideProps } from 'next'
 import { Editor } from '@/components/Editor'
 import { useEditor } from '@/contexts/EditorContext'
 import { Loading } from '@/components/Loading'
-import { connectToCacheDatabase } from '@/services/upstash'
+// import { connectToCacheDatabase } from '@/services/upstash'
 import { useCounter } from '@/contexts/CounterContext'
 import { get } from '@/services/api'
 
@@ -44,13 +44,13 @@ export default function Note({ id, count }: NoteProps) {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { id } = context.query
-  const redis = await connectToCacheDatabase()
+  // const redis = await connectToCacheDatabase()
 
-  const count = await redis.incr(`counter:${id}`)
+  // const count = await redis.incr(`counter:${id}`)
 
   return {
     props: {
-      count,
+      count: 0,
       id,
     },
   }
