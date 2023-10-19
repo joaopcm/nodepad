@@ -16,7 +16,9 @@ export async function save(requestBody: {
 export async function get(
   id: string,
 ): Promise<{ html: string; codeSnippet: string }> {
-  const response = await fetch(`/api/${id}`).then((res) => res.json())
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_APP_URL}/api/${id}`,
+  ).then((res) => res.json())
 
   return response
 }

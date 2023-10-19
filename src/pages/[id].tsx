@@ -1,40 +1,39 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { NextSeo } from 'next-seo'
 import { GetServerSideProps } from 'next'
 
 import { Editor } from '@/components/Editor'
 import { useEditor } from '@/contexts/EditorContext'
-import { Loading } from '@/components/Loading'
-// import { connectToCacheDatabase } from '@/services/upstash'
+// import { Loading } from '@/components/Loading'
+import { connectToCacheDatabase } from '@/services/upstash'
 import { useCounter } from '@/contexts/CounterContext'
 import { get } from '@/services/api'
 
 interface NoteProps {
-  id: string
   count: number
+  note: {
+    html: string
+    codeSnippet: string
+  }
 }
 
-export default function Note({ id, count }: NoteProps) {
+export default function Note({ count, note }: NoteProps) {
   const { editor, setCodeSnippet } = useEditor()
   const { setCounter } = useCounter()
-  const [isLoading, setIsLoading] = useState(true)
-
-  setCounter(count)
 
   useEffect(() => {
-    if (editor && id) {
-      get(id)
-        .then((data) => {
-          editor.commands.setContent(data.html)
-          setCodeSnippet(data.codeSnippet)
-        })
-        .finally(() => setIsLoading(false))
-    }
-  }, [editor, id, setCodeSnippet])
+    setCounter(count)
+  }, [setCounter, count])
+
+  useEffect(() => {
+    if (!editor) return
+
+    editor.commands.setContent(note.html)
+    setCodeSnippet(note.codeSnippet)
+  }, [editor, setCodeSnippet, note])
 
   return (
     <>
-      <Loading isLoading={isLoading} />
       <NextSeo noindex />
 
       <Editor />
@@ -44,14 +43,24 @@ export default function Note({ id, count }: NoteProps) {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { id } = context.query
-  // const redis = await connectToCacheDatabase()
 
-  // const count = await redis.incr(`counter:${id}`)
+  if (!id) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    }
+  }
+
+  const redis = await connectToCacheDatabase()
+  const count = await redis.incr(`counter:${id}`)
+  const note = await get(id as string)
 
   return {
     props: {
-      count: 0,
-      id,
+      count,
+      note,
     },
   }
 }
